@@ -152,69 +152,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-python-tool" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div align='center' >
-<font size='5'>python-tool</font>
-</div>
-
-
-<p>查看GPU使用情况</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> pynvml</span><br><span class="line"><span class="keyword">from</span> terminaltables <span class="keyword">import</span> AsciiTable </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_mem</span>(<span class="params">cuda_device</span>):</span></span><br><span class="line">    devices_info = os.popen(<span class="string">&#x27;&quot;/usr/bin/nvidia-smi&quot; --query-gpu=memory.total,memory.used --format=csv,nounits,noheader&#x27;</span>).read().strip().split(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">    total, used = devices_info[<span class="built_in">int</span>(cuda_device)].split(<span class="string">&#x27;,&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> total,used</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def main():</span><br><span class="line">    total,used &#x3D; check_mem(cuda_device &#x3D; &#39;0&#39;)</span><br><span class="line">    print(&#39;total mem %f\t,used mem %f\t&#39;%total,used)</span><br></pre></td></tr></table></figure>
-
-<p>实验结果如下下图：<br><img src="/python-tool/check_mem.jpg" alt="check mem"></p>
-<p>检测每张卡的GPU使用情况，根据自己的试验需求设置期望内存，并设置定时检测是否GPU资源足够试验需求。</p>
-<p><strong>FBI WARNING!强烈不建议检测时间设置太频繁，防止他人偶尔退出实验代码，检查后重新启动时间，发现资源被你占用了。</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check</span>(<span class="params"><span class="built_in">id</span></span>):</span></span><br><span class="line"></span><br><span class="line">    pynvml.nvmlInit()</span><br><span class="line"></span><br><span class="line">    handle = pynvml.nvmlDeviceGetHandleByIndex(<span class="built_in">id</span>)</span><br><span class="line">    meminfo = pynvml.nvmlDeviceGetMemoryInfo(handle)</span><br><span class="line">    total = (meminfo.total/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line">    free = (meminfo.free/<span class="number">1024</span>/<span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> total,free</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_table</span>(<span class="params">id_list</span>):</span></span><br><span class="line">    table_data = [[<span class="string">&#x27;GPU ID&#x27;</span>, <span class="string">&#x27;  Total/Free&#x27;</span>]]</span><br><span class="line">    id_num = <span class="built_in">len</span>(id_list)</span><br><span class="line">    infor = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> id_list:</span><br><span class="line">        infor.insert(i,check(i))</span><br><span class="line">        infor_dis = <span class="built_in">str</span>(infor[i][<span class="number">0</span>]) +<span class="string">&#x27; MB / &#x27;</span>+<span class="built_in">str</span>(infor[i][<span class="number">1</span>]) + <span class="string">&#x27; MB&#x27;</span></span><br><span class="line">        table_data.append([<span class="built_in">str</span>(i),infor_dis])</span><br><span class="line">    <span class="keyword">return</span> infor,table_data</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">prog_to_run</span>(<span class="params">cmd_list</span>):</span></span><br><span class="line">   </span><br><span class="line">    infor,table_data = create_table(cmd_dict[<span class="string">&#x27;gpu_list&#x27;</span>])</span><br><span class="line">    gpu_ready_count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    table_data[<span class="number">0</span>].append(<span class="string">&#x27;Ready To Run&#x27;</span>)   </span><br><span class="line">    table_data[<span class="number">0</span>].append(<span class="string">&#x27;Memory&#x27;</span>) </span><br><span class="line"></span><br><span class="line">    <span class="comment">#check every gpu needed </span></span><br><span class="line">    <span class="keyword">for</span> index,gpu_id <span class="keyword">in</span> <span class="built_in">enumerate</span>(cmd_list[<span class="string">&#x27;id&#x27;</span>]):</span><br><span class="line"></span><br><span class="line">        memory_free = infor[gpu_ready_count][<span class="number">1</span>]</span><br><span class="line">        <span class="comment">#add the information to the target GPU</span></span><br><span class="line">        table_data[gpu_id+<span class="number">1</span>].append(cmd_list[<span class="string">&#x27;program&#x27;</span>])</span><br><span class="line">        table_data[gpu_id+<span class="number">1</span>].append(cmd_list[<span class="string">&#x27;memory&#x27;</span>][index])</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> memory_free &gt; cmd_list[<span class="string">&#x27;memory&#x27;</span>][index]: </span><br><span class="line">            gpu_ready_count+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> gpu_ready_count == <span class="built_in">len</span>(cmd_list[<span class="string">&#x27;id&#x27;</span>]):</span><br><span class="line">        <span class="comment"># print(&#x27;run the code&#x27;)</span></span><br><span class="line">        os.system(cmd_list[<span class="string">&#x27;program&#x27;</span>])</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;Only %d &#x27;</span>%gpu_ready_count,<span class="string">&#x27;GPU(S) has/have been ready! Wait for moment&#x27;</span>)  </span><br><span class="line"></span><br><span class="line">    table = AsciiTable(table_data)</span><br><span class="line">    print(table.table) </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">clear = <span class="keyword">lambda</span>: os.system(<span class="string">&#x27;clear&#x27;</span>)      <span class="comment"># or os.system(&#x27;clear&#x27;) for Unix</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">   </span><br><span class="line">    cmd_dict = &#123;</span><br><span class="line">        <span class="string">&#x27;gpu_list&#x27;</span>:[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>],</span><br><span class="line">        <span class="string">&#x27;program&#x27;</span>:<span class="string">&#x27;python ./helloworld.py&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;id&#x27;</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>],</span><br><span class="line">        <span class="string">&#x27;memory&#x27;</span>:[<span class="number">1000</span>,<span class="number">1000</span>,<span class="number">1000</span>,<span class="number">20000</span>],</span><br><span class="line">        <span class="string">&#x27;check frequence&#x27;</span>:<span class="number">60</span>     <span class="comment">#uint is second</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        clear()</span><br><span class="line">        <span class="keyword">if</span>(prog_to_run(cmd_dict)):</span><br><span class="line">            print(<span class="string">&#x27;.py has been running out&#x27;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">&#x27;checking continuedly&#x27;</span>)</span><br><span class="line">            time.sleep(cmd_dict[<span class="string">&#x27;check frequence&#x27;</span>])</span><br></pre></td></tr></table></figure>
-
-<p>实验效果如下图：<br><img src="/python-tool/GPU_Check.jpg" alt="GPU Checking"></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/15/python-tool/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
